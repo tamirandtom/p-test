@@ -1,0 +1,66 @@
+<!doctype html>
+<html ng-app="PDATA">
+
+<head>
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <title>Pdata</title>
+      <meta name="description" content="Pdata">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=no">
+      <meta property="og:url" content="TODO" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Pdata" />
+      <meta property="og:site_name" content="Pdata" />
+      <meta property="og:description" content="Pdata" />
+      <meta property="og:image" content="" />
+      <meta property="og:image:url" content="" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:type" content="image/png" />
+      <!--favicons-->
+      <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+      <link rel="icon" href="img/favicon.png" type="image/x-icon">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+      <link rel="stylesheet" type="text/css" href="css/main.css">
+      <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+      <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+
+      <style>
+          
+      </style>
+</head>
+
+<body id="top" ng-controller="index">
+
+  <div id='map'></div>
+
+
+<div class="controls">
+        Show me <span class="clickable" ng-click="nextClick('metric')">{{currMetric.label}}</span> on <span class="clickable" ng-click="nextClick('domain')">{{currDomain.label}}</span> in <span class="clickable" ng-click="nextClick('date')">{{currDate.label}}</span>, on <span class="clickable" ng-click="nextClick('device')">{{currDevice.label}}</span>.
+</div>
+
+  
+<!-- 
+  <div ng-repeat="(key, value) in mapData" style="display:block;width:calc(({{value}} / {{mapData['maxValue']}})  * 100%); background:red;">
+      {{key}} : {{value}}
+  </div> -->
+
+
+      <!--Vendor:Jq-->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+      <!--Vendor: AngularJS-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js"></script>
+      <script src="https://code.angularjs.org/1.5.8/angular-animate.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.2/chroma.min.js"></script>
+      <!--App file-->
+      <script src="js/data.js"></script>
+      <script src="js/app.js"></script>
+
+
+</body>
+
+</html>

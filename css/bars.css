@@ -1,0 +1,21 @@
+.holo-section-city-bar {
+    height:32px;
+    font-size:24px;
+    line-height:32px;
+    color:#fff;
+    padding-right:8px;
+    text-align:right;
+    background:#F3B32A;
+    opacity:1;
+    position:relative;
+    top:0px;
+    white-space:nowrap;
+    margin-bottom:8px;
+        /*margin-right: 10px;*/
+    transition: all 1.5s ease-in-out;
+}
+
+.holo-section-city-bar.ng-hide {
+   /*width:0px;*/
+   opacity:0;
+}

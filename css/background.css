@@ -1,0 +1,109 @@
+.holo-bg {
+	width: 100%;
+	height: 100%;
+	background: #020011;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+}
+
+.holo-bg__img {
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center;
+	opacity: 0;
+    transition:all 0.3s ease-out;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.holo-bg__img--one {
+		background-image: url('../img/Auschwitz.jpg');		
+}
+.holo-bg__img--two {
+		background-image: url('../img/Auschwitz2.jpg');
+}
+.holo-bg__img--three {
+		background-image: url('../img/Majdanek.jpg');
+}
+
+.holo-bg__img.showing {
+	opacity: 0.14;
+}
+
+.type-wrap {
+	background: #F3B32A;
+	border-radius: 4px;
+	padding: 12px 10px 12px 20px;
+	width: 80%;
+	margin: auto auto;
+	direction: rtl;
+	margin-top: 40px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.type-wrap span {
+	line-height: 24px;
+	font-size: 24px;
+}
+
+.type-wrap .material-icons {
+	position: relative;
+	top: 5px;
+}
+
+@media (min-width: 640px) {
+	.type-wrap {
+		margin-top: 24px;
+		max-width: 600px;
+	}
+}
+
+
+  /* code for animated blinking cursor */
+        .typed-cursor{
+            opacity: 1;
+            font-weight: 100;
+            -webkit-animation: blink 0.7s infinite;
+            -moz-animation: blink 0.7s infinite;
+            -ms-animation: blink 0.7s infinite;
+            -o-animation: blink 0.7s infinite;
+            animation: blink 0.7s infinite;
+        }
+        @-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-webkit-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-moz-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-ms-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-o-keyframes blink{
+            0% { opacity:1; }
+            50% { opacity:0; }
+            100% { opacity:1; }
+        }
+
+        .typed-fade-out{
+            opacity: 0;
+            animation: 0;
+            transition: opacity .25s;
+        }
+
+        
