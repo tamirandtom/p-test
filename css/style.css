@@ -29,6 +29,17 @@ body {
     color: rgba(0, 0, 0, 0.60);
     letter-spacing: 0;
 }
+.tooltip {
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    z-index: 1;
+    font-family: 'Inter';
+    font-weight: 400;
+    font-size: 56px;
+    color: rgba(0, 0, 0, 0.60);
+    letter-spacing: 0;
+}
 
 .controls .clickable {
     font-weight: 700;

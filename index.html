@@ -40,6 +40,10 @@
         Show me <span class="clickable" ng-click="nextClick('metric')">{{currMetric.label}}</span> on <span class="clickable" ng-click="nextClick('domain')">{{currDomain.label}}</span> in <span class="clickable" ng-click="nextClick('date')">{{currDate.label}}</span>, on <span class="clickable" ng-click="nextClick('device')">{{currDevice.label}}</span>.
 </div>
 
+<div class="tooltip">
+    {{currCountry}} : {{currValue}}
+</div>
+
   
 <!-- 
   <div ng-repeat="(key, value) in mapData" style="display:block;width:calc(({{value}} / {{mapData['maxValue']}})  * 100%); background:red;">

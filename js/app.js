@@ -30,6 +30,19 @@ map.on('style.load', function () {
   
  })
 
+
+ map.on('mousedown', function(e) {
+  var target = map.queryRenderedFeatures(e.point, {
+    layers: ['a']
+  });
+if (target[0]) {
+  $scope.currCountry = target[0].properties.ADMIN;
+  $scope.currValue = int.parseInt($scope.mapData[(target[0].properties.ISO_N3)]);
+  $scope.$apply();
+}
+});
+
+
  $scope.nextClick = function(metric) {
 
   if (metric=="metric")
