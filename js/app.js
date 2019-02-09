@@ -7,16 +7,16 @@ var map = new mapboxgl.Map({
   zoom: 3
 });
 var allMetrics = [{
-  "label": "how long users lasted",
+  "label": "how long users lasted 💦",
   "dataName": "avg_visit_duration"
 }, {
-  "label": "how many videos per session were watched",
+  "label": "how many videos per session were watched 🏊🏻‍♂️",
   "dataName": "pages_per_visit"
 }, {
-  "label": "how many visits",
+  "label": "how many visits 🗿",
   "dataName": "estimated_visits"
 }, {
-  "label": "how many unique visits",
+  "label": "how many unique visits 💎",
   "dataName": "estimated_unique"
 }]
 var allSites = [{
@@ -33,13 +33,13 @@ var allSites = [{
   "dataName": "xvideos.com"
 }]
 var allDevices = [{
-  "label": "desktop",
+  "label": "desktop 💻",
   "dataName": "desktop"
 }, {
-  "label": "mobile web",
+  "label": "mobile web 📱",
   "dataName": "mobileweb"
 }, {
-  "label": "all traffic",
+  "label": "all traffic 🕹",
   "dataName": "total"
 }]
 var allDates = [{
@@ -115,8 +115,17 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
       $scope.currCountry = e.features[0].properties.ADMIN;
 
-      // TODO: Format countries
-      $scope.currValue = parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]);
+if ($scope.currMetric.dataName=='avg_visit_duration')
+{
+  $scope.currValue = "" + fancyTimeFormat(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)])) + " Mins";
+
+} else if ($scope.currMetric.dataName=='pages_per_visit') 
+{
+  $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Pages";
+
+} else {
+  $scope.currValue = nFormatter(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]));
+}
         $scope.$apply();
 
     } 
@@ -235,6 +244,7 @@ for (var j = 0; j < allCountries.length; j++) {
 
 
 // TODO: date to be a range
+
 function getData(domain, date, metric, device) {
 
   var returnArr = {};
@@ -258,4 +268,43 @@ function getData(domain, date, metric, device) {
 
   // console.log(maxValue,minValue)
   return returnArr;
+}
+
+function fancyTimeFormat(time)
+{   
+    // Hours, minutes and seconds
+    var hrs = ~~(time / 3600);
+    var mins = ~~((time % 3600) / 60);
+    var secs = ~~time % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    var ret = "";
+
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+}
+
+function nFormatter(num, digits) {
+  var si = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "k" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "G" },
+    { value: 1E12, symbol: "T" },
+    { value: 1E15, symbol: "P" },
+    { value: 1E18, symbol: "E" }
+  ];
+  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  var i;
+  for (i = si.length - 1; i > 0; i--) {
+    if (num >= si[i].value) {
+      break;
+    }
+  }
+  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
