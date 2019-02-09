@@ -114,6 +114,8 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
       });
 
       $scope.currCountry = e.features[0].properties.ADMIN;
+
+      // TODO: Format countries
       $scope.currValue = parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]);
         $scope.$apply();
 
@@ -191,17 +193,20 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
 
   $scope.drawmap = function () {
+    var colorScale = chroma.scale(['#FFD9E6','#E6648F','#C6446F','#8B304F']).correctLightness();
+    // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
     $scope.mapData = getData($scope.currDomain.dataName, $scope.currDate.dataName, $scope.currMetric.dataName, $scope.currDevice.dataName);
-
+    
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
 
 
     for (var key in $scope.mapData) {
       if ($scope.mapData.hasOwnProperty(key)) {
-        var currValue = ($scope.mapData[key] / $scope.mapData["maxValue"]);
-        var color = chroma.mix("#fff", '#E6648F', currValue, 'lab').hex();
+        var currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]);
+        // var color = chroma.mix("#fff", '#E6648F', currValue, 'lab').hex();
+        var color = colorScale(currValue).hex()
         expression.push(key, color);
       }
     }
@@ -228,19 +233,29 @@ for (var j = 0; j < allCountries.length; j++) {
   getCountryName[parseInt(allCountries[j]["country-code"])] = allCountries[j]["name"];
 }
 
+
+// TODO: date to be a range
 function getData(domain, date, metric, device) {
+
   var returnArr = {};
   var currMetric = device + "_" + metric;
   var maxValue = 0;
+  var minValue = 100000;
   for (var i = 0; i < allData.length; i++) {
     if (allData[i].site == domain && allData[i].yearmonth == date && allData[i][currMetric] && allData[i].country != '999') {
       // console.log('country' + getCountryName[allData[i].country] + " is " + allData[i][currMetric]);
       if (maxValue < allData[i][currMetric]) {
         maxValue = allData[i][currMetric];
       }
+      if (minValue > allData[i][currMetric]) {
+        minValue = allData[i][currMetric];
+      }
       returnArr[('000' + allData[i].country).substr(-3)] = allData[i][currMetric];
     }
   }
   returnArr['maxValue'] = maxValue
+  returnArr['minValue'] = minValue
+
+  // console.log(maxValue,minValue)
   return returnArr;
 }
