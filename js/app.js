@@ -205,7 +205,7 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
     var colorScale = chroma.scale(['#FFD9E6','#E6648F','#C6446F','#8B304F']).correctLightness();
     // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
-    $scope.mapData = getData($scope.currDomain.dataName, $scope.currDate.dataName, $scope.currMetric.dataName, $scope.currDevice.dataName);
+    $scope.mapData = getData($scope.currDomain.dataName, '2018-07' ,'2018-10' , $scope.currMetric.dataName, $scope.currDevice.dataName);
     
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
@@ -233,7 +233,6 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
 
 
 
-
 }]);
 
 
@@ -243,26 +242,64 @@ for (var j = 0; j < allCountries.length; j++) {
 }
 
 
-// TODO: date to be a range
 
-function getData(domain, date, metric, device) {
+
+
+
+
+function getPosInDateArr(month) {
+  for (j=0;j<allDates.length;j++)
+  {
+    if (allDates[j].dataName == month)
+    {
+      return j;
+    }
+  }
+}
+
+function getData(domain, datestart, dateend, metric, device) {
 
   var returnArr = {};
   var currMetric = device + "_" + metric;
   var maxValue = 0;
   var minValue = 100000;
+
+  var AVGArr = [];
   for (var i = 0; i < allData.length; i++) {
-    if (allData[i].site == domain && allData[i].yearmonth == date && allData[i][currMetric] && allData[i].country != '999') {
+    var isDateInRange = (getPosInDateArr(allData[i].yearmonth) >= getPosInDateArr(datestart) && getPosInDateArr(allData[i].yearmonth) <= getPosInDateArr(dateend));
+    if (allData[i].site == domain && isDateInRange && allData[i][currMetric] && allData[i].country != '999') {
       // console.log('country' + getCountryName[allData[i].country] + " is " + allData[i][currMetric]);
-      if (maxValue < allData[i][currMetric]) {
-        maxValue = allData[i][currMetric];
+ 
+
+      if (returnArr[('000' + allData[i].country).substr(-3)])
+      {
+        AVGArr[('000' + allData[i].country).substr(-3)]++;
+        returnArr[('000' + allData[i].country).substr(-3)] += allData[i][currMetric];
+      } else {
+        AVGArr[('000' + allData[i].country).substr(-3)]=1;;
+        returnArr[('000' + allData[i].country).substr(-3)] = allData[i][currMetric];
       }
-      if (minValue > allData[i][currMetric]) {
-        minValue = allData[i][currMetric];
-      }
-      returnArr[('000' + allData[i].country).substr(-3)] = allData[i][currMetric];
+              // increase counter per country by 1
+            
+    }
+
+  }
+
+  // loop throu returnArr
+
+  for (var key in returnArr) {
+    if (returnArr.hasOwnProperty(key)) {
+      returnArr[key] = returnArr[key] / AVGArr[key];
+
+       if (maxValue < returnArr[key]) {
+      maxValue = returnArr[key];
+    }
+    if (minValue > returnArr[key]) {
+      minValue = returnArr[key];
+    }
     }
   }
+ 
   returnArr['maxValue'] = maxValue
   returnArr['minValue'] = minValue
 
