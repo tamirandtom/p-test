@@ -49,6 +49,7 @@ body {
     font-size: 56px;
     color: rgba(0, 0, 0, 0.60);
     letter-spacing: 0;
+    pointer-events: none;
 }
 
 .controls .clickable {

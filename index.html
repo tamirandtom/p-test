@@ -37,11 +37,11 @@
 
 
 <div class="controls">
-        Show me <span class="clickable" ng-click="nextClick('metric')">{{currMetric.label}}</span> on <span class="clickable" ng-click="nextClick('domain')">{{currDomain.label}}</span> in <span class="clickable" ng-click="nextClick('date')">📆 {{currDate.label}}</span>, on <span class="clickable" ng-click="nextClick('device')">{{currDevice.label}}</span>.
+        Show me <span class="clickable" ng-click="nextClick('metric')">{{currMetric.label}}</span> on <span class="clickable" ng-click="nextClick('domain')">{{currDomain.label}}</span> in <span class="clickable" ng-click="nextClick('date')">📆 {{currDateRange.label}}</span>, for <span class="clickable" ng-click="nextClick('device')">{{currDevice.label}}</span>.
 </div>
 
 <div ng-if="currCountry" class="tooltip">
-    {{currCountry}}: {{currValue ? currValue : 'no data'}}
+    {{currCountry}}: {{(currValue == 0 || isNaN(currValue))  ? 'no data' : currValue}}
 </div>
 
   

@@ -1,14 +1,21 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1Nnc1NTkifQ.CxOvrXtNgryGkkgXkiShsQ';
 
+
+
 var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/tamirp/cjrw716rl22gm1foe5p28gaap',
   center: [-103.59179687498357, 40.66995747013945],
   zoom: 3
 });
+
+
 var allMetrics = [{
   "label": "how long users lasted 💦",
   "dataName": "avg_visit_duration"
+}, {
+  "label": "monthly sessions per users 🌡",
+  "dataName": "avg_sessions_per_user"
 }, {
   "label": "how many videos per session were watched 🏊🏻‍♂️",
   "dataName": "pages_per_visit"
@@ -42,6 +49,16 @@ var allDevices = [{
   "label": "all traffic 🕹",
   "dataName": "total"
 }]
+
+var allDatesRanges = [{
+  "label": "Winter 2018",
+  "start": "2018-03",
+  "end": "2018-05"
+}, {
+  "label": "Summer 2018",
+  "start": "2018-06",
+  "end": "2018-10"
+}];
 var allDates = [{
   "label": "march 2018",
   "dataName": "2018-03"
@@ -71,11 +88,21 @@ var allDates = [{
   "dataName": "2018-11"
 }]
 
+// add metric!
+
+for (var i = 0; i < allData.length; i++) {
+  allData[i].desktop_avg_sessions_per_user = allData[i].desktop_estimated_visits / allData[i].desktop_estimated_unique;
+  allData[i].mobileweb_avg_sessions_per_user = allData[i].mobileweb_estimated_visits / allData[i].mobileweb_estimated_unique;
+  allData[i].total_avg_sessions_per_user = allData[i].total_estimated_visits / allData[i].total_estimated_unique;
+}
+
 
 var App = angular.module('PDATA', ['ngAnimate']);
 App.controller('index', ['$scope', '$http', '$location', function ($scope, $http, $location) {
   $scope.currDomain = allSites[0];
   $scope.currDomainPos = 0;
+  $scope.currDateRange = allDatesRanges[0];
+  $scope.currDateRangePos = 0;
   $scope.currDate = allDates[0];
   $scope.currDatePos = 0;
   $scope.currMetric = allMetrics[0];
@@ -86,12 +113,8 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
 
   map.on('style.load', function () {
-
     $scope.drawmap();
-
   })
-
-
 
   map.on("mousemove", "a", function (e) {
     if (e.features.length > 0) {
@@ -114,21 +137,27 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
       });
 
       $scope.currCountry = e.features[0].properties.ADMIN;
+      if ($scope.mapData[(e.features[0].properties.ISO_N3)])
+      {
+        if ($scope.currMetric.dataName == 'avg_visit_duration') {
+          $scope.currValue = "" + fancyTimeFormat(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)])) + " Mins";
+  
+        } else if ($scope.currMetric.dataName == 'pages_per_visit') {
+          $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Pages";
+  
+        } else if ($scope.currMetric.dataName == 'avg_sessions_per_user') {
+          $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Sessions";
+  
+        } else {
+          $scope.currValue = nFormatter(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]));
+        }
+      } else {
+        $scope.currValue=0;
+      }
+     
+      $scope.$apply();
 
-if ($scope.currMetric.dataName=='avg_visit_duration')
-{
-  $scope.currValue = "" + fancyTimeFormat(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)])) + " Mins";
-
-} else if ($scope.currMetric.dataName=='pages_per_visit') 
-{
-  $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Pages";
-
-} else {
-  $scope.currValue = nFormatter(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]));
-}
-        $scope.$apply();
-
-    } 
+    }
   });
 
   // When the mouse leaves the state-fill layer, update the feature state of the
@@ -146,7 +175,7 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
       $scope.currValue = "";
       $scope.$apply();
     }
-    
+
     hoveredStateId = null;
   });
 
@@ -160,7 +189,7 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
   // }
   // });
 
-  var hoveredStateId =  null;
+  var hoveredStateId = null;
 
   $scope.nextClick = function (metric) {
 
@@ -189,11 +218,11 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
     }
 
     if (metric == "date") {
-      $scope.currDatePos++;
-      if ($scope.currDatePos == allDates.length) {
-        $scope.currDatePos = 0;
+      $scope.currDateRangePos++;
+      if ($scope.currDateRangePos == allDatesRanges.length) {
+        $scope.currDateRangePos = 0;
       }
-      $scope.currDate = allDates[$scope.currDatePos];
+      $scope.currDateRange = allDatesRanges[$scope.currDateRangePos];
     }
 
 
@@ -202,11 +231,11 @@ if ($scope.currMetric.dataName=='avg_visit_duration')
 
 
   $scope.drawmap = function () {
-    var colorScale = chroma.scale(['#FFD9E6','#E6648F','#C6446F','#8B304F']).correctLightness();
+    var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
     // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
-    $scope.mapData = getData($scope.currDomain.dataName, '2018-07' ,'2018-10' , $scope.currMetric.dataName, $scope.currDevice.dataName);
-    
+    $scope.mapData = getData($scope.currDomain.dataName, $scope.currDateRange.start, $scope.currDateRange.end, $scope.currMetric.dataName, $scope.currDevice.dataName);
+
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
 
@@ -248,10 +277,8 @@ for (var j = 0; j < allCountries.length; j++) {
 
 
 function getPosInDateArr(month) {
-  for (j=0;j<allDates.length;j++)
-  {
-    if (allDates[j].dataName == month)
-    {
+  for (j = 0; j < allDates.length; j++) {
+    if (allDates[j].dataName == month) {
       return j;
     }
   }
@@ -263,24 +290,22 @@ function getData(domain, datestart, dateend, metric, device) {
   var currMetric = device + "_" + metric;
   var maxValue = 0;
   var minValue = 100000;
-
   var AVGArr = [];
-  for (var i = 0; i < allData.length; i++) {
-    var isDateInRange = (getPosInDateArr(allData[i].yearmonth) >= getPosInDateArr(datestart) && getPosInDateArr(allData[i].yearmonth) <= getPosInDateArr(dateend));
-    if (allData[i].site == domain && isDateInRange && allData[i][currMetric] && allData[i].country != '999') {
-      // console.log('country' + getCountryName[allData[i].country] + " is " + allData[i][currMetric]);
- 
 
-      if (returnArr[('000' + allData[i].country).substr(-3)])
-      {
+  for (var i = 0; i < allData.length; i++) {
+
+    var isDateInRange = (getPosInDateArr(allData[i].yearmonth) >= getPosInDateArr(datestart) && getPosInDateArr(allData[i].yearmonth) <= getPosInDateArr(dateend));
+
+    if (allData[i].site == domain && isDateInRange && allData[i][currMetric] && allData[i].country != '999') {
+      if (returnArr[('000' + allData[i].country).substr(-3)]) {
         AVGArr[('000' + allData[i].country).substr(-3)]++;
         returnArr[('000' + allData[i].country).substr(-3)] += allData[i][currMetric];
       } else {
-        AVGArr[('000' + allData[i].country).substr(-3)]=1;;
+        AVGArr[('000' + allData[i].country).substr(-3)] = 1;;
         returnArr[('000' + allData[i].country).substr(-3)] = allData[i][currMetric];
       }
-              // increase counter per country by 1
-            
+      // increase counter per country by 1
+
     }
 
   }
@@ -291,15 +316,15 @@ function getData(domain, datestart, dateend, metric, device) {
     if (returnArr.hasOwnProperty(key)) {
       returnArr[key] = returnArr[key] / AVGArr[key];
 
-       if (maxValue < returnArr[key]) {
-      maxValue = returnArr[key];
-    }
-    if (minValue > returnArr[key]) {
-      minValue = returnArr[key];
-    }
+      if (maxValue < returnArr[key]) {
+        maxValue = returnArr[key];
+      }
+      if (minValue > returnArr[key]) {
+        minValue = returnArr[key];
+      }
     }
   }
- 
+
   returnArr['maxValue'] = maxValue
   returnArr['minValue'] = minValue
 
@@ -307,34 +332,53 @@ function getData(domain, datestart, dateend, metric, device) {
   return returnArr;
 }
 
-function fancyTimeFormat(time)
-{   
-    // Hours, minutes and seconds
-    var hrs = ~~(time / 3600);
-    var mins = ~~((time % 3600) / 60);
-    var secs = ~~time % 60;
+function fancyTimeFormat(time) {
+  // Hours, minutes and seconds
+  var hrs = ~~(time / 3600);
+  var mins = ~~((time % 3600) / 60);
+  var secs = ~~time % 60;
 
-    // Output like "1:01" or "4:03:59" or "123:03:59"
-    var ret = "";
+  // Output like "1:01" or "4:03:59" or "123:03:59"
+  var ret = "";
 
-    if (hrs > 0) {
-        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-    }
+  if (hrs > 0) {
+    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+  }
 
-    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
+  ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+  ret += "" + secs;
+  return ret;
 }
 
 function nFormatter(num, digits) {
-  var si = [
-    { value: 1, symbol: "" },
-    { value: 1E3, symbol: "k" },
-    { value: 1E6, symbol: "M" },
-    { value: 1E9, symbol: "G" },
-    { value: 1E12, symbol: "T" },
-    { value: 1E15, symbol: "P" },
-    { value: 1E18, symbol: "E" }
+  var si = [{
+      value: 1,
+      symbol: ""
+    },
+    {
+      value: 1E3,
+      symbol: "k"
+    },
+    {
+      value: 1E6,
+      symbol: "M"
+    },
+    {
+      value: 1E9,
+      symbol: "G"
+    },
+    {
+      value: 1E12,
+      symbol: "T"
+    },
+    {
+      value: 1E15,
+      symbol: "P"
+    },
+    {
+      value: 1E18,
+      symbol: "E"
+    }
   ];
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   var i;
