@@ -40,16 +40,16 @@
         Show me <span class="clickable" ng-click="nextClick('metric')">{{currMetric.label}}</span> on <span class="clickable" ng-click="nextClick('domain')">{{currDomain.label}}</span> in <span class="clickable" ng-click="nextClick('date')">{{currDate.label}}</span>, on <span class="clickable" ng-click="nextClick('device')">{{currDevice.label}}</span>.
 </div>
 
-<div class="tooltip">
-    {{currCountry}} : {{currValue}}
+<div ng-if="currCountry" class="tooltip">
+    {{currCountry}}: {{currValue ? currValue : 'no data'}}
 </div>
 
   
-<!-- 
-  <div ng-repeat="(key, value) in mapData" style="display:block;width:calc(({{value}} / {{mapData['maxValue']}})  * 100%); background:red;">
-      {{key}} : {{value}}
-  </div> -->
 
+  <!-- <div ng-repeat="(key, value) in mapData" style="display:block;width:calc(({{value}} / {{mapData['maxValue']}})  * 100%); background:red;">
+      {{key}} : {{value}}
+  </div>
+ -->
 
       <!--Vendor:Jq-->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>

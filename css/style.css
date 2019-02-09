@@ -19,12 +19,18 @@ body {
 }
 
 .controls {
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+    
     position: fixed;
     top: 40px;
     left: 40px;
     z-index: 1;
     font-family: 'Inter';
     font-weight: 400;
+    text-shadow: 0px 0px 1px #fff;
     font-size: 56px;
     color: rgba(0, 0, 0, 0.60);
     letter-spacing: 0;

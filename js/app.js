@@ -87,6 +87,7 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
   map.on('style.load', function () {
 
+    $scope.drawmap();
 
   })
 
@@ -113,7 +114,7 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
       });
 
       $scope.currCountry = e.features[0].properties.ADMIN;
-        $scope.currValue = parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]);
+      $scope.currValue = parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]);
         $scope.$apply();
 
     } 
@@ -187,6 +188,8 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
     $scope.drawmap();
   }
+
+
   $scope.drawmap = function () {
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
     $scope.mapData = getData($scope.currDomain.dataName, $scope.currDate.dataName, $scope.currMetric.dataName, $scope.currDevice.dataName);
@@ -213,6 +216,10 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
     ]);
 
   };
+
+
+
+
 }]);
 
 
@@ -226,7 +233,7 @@ function getData(domain, date, metric, device) {
   var currMetric = device + "_" + metric;
   var maxValue = 0;
   for (var i = 0; i < allData.length; i++) {
-    if (allData[i].site == domain && allData[i].yearmonth == date && allData[i][currMetric]) {
+    if (allData[i].site == domain && allData[i].yearmonth == date && allData[i][currMetric] && allData[i].country != '999') {
       // console.log('country' + getCountryName[allData[i].country] + " is " + allData[i][currMetric]);
       if (maxValue < allData[i][currMetric]) {
         maxValue = allData[i][currMetric];
