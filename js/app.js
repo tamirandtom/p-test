@@ -20,10 +20,10 @@ var allMetrics = [{
   "label": "how many videos per session were watched 🏊🏻‍♂️",
   "dataName": "pages_per_visit"
 }, {
-  "label": "how many visits 🗿",
+  "label": "the ammount of visits 🗿",
   "dataName": "estimated_visits"
 }, {
-  "label": "how many unique visits 💎",
+  "label": "the unique visits 💎",
   "dataName": "estimated_unique"
 }]
 var allSites = [{
@@ -43,7 +43,7 @@ var allDevices = [{
   "label": "desktop 💻",
   "dataName": "desktop"
 }, {
-  "label": "mobile web 📱",
+  "label": "mobile 📱",
   "dataName": "mobileweb"
 }, {
   "label": "all traffic 🕹",

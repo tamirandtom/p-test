@@ -108,3 +108,21 @@ body {
     transition: all .2s linear;
     color: rgba(255, 0, 140, 1);
 }
+
+@media only screen and (max-width: 640px) { 
+    .tooltip  {
+      font-size: 14px;
+      color: #000;
+       bottom: 24px;
+       right: 24px;
+    }
+    .controls {
+        padding: 24px;
+        font-size: 24px;
+        line-height: 36px;
+    }
+    .legend {
+        bottom: 24px;
+        left: 24px;
+    }
+}
