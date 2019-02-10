@@ -37,10 +37,10 @@
 
   <div class="legend">
       <div class="bar"></div>
-      <div class="pointer" ng-if="currCountry" style="top:calc({{currLegendTop}} * 100%);"></div> 
+      <div class="pointer" ng-if="currCountry" style="bottom:calc({{currLegendTop}} * 100%);"></div> 
       <div class="contain">
-        <div class="mincountry legend-text"><b>{{currMinCountry}}</b><br>{{currMinVal}}</div>
-        <div class="maxcountry legend-text">{{currMaxVal}}<br><b>{{currMaxCountry}}</b></div>
+        <div class="maxcountry legend-text"><b>{{currMaxCountry}}</b><br>{{currMaxVal}}</div>
+        <div class="mincountry legend-text">{{currMinVal}}<br><b>{{currMinCountry}}</b></div>
       </div>
      
   </div>

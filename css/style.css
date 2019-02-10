@@ -55,7 +55,7 @@ body {
     font-weight: 600;
 }
 .legend .bar {
-    background-image: linear-gradient(-180deg, #FCCDDC 4%, #DC648D 100%);
+    background-image: linear-gradient(180deg, #DC648D 2%, #FCCDDC 98%);
     width:16px;
     height: 100%;
 }
