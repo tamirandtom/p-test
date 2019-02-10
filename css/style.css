@@ -8,16 +8,49 @@ body {
     font-size: 24px;
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 #map {
     width: 100%;
-    height: 100%;
+    height: calc(100% + 32px);
     position: fixed;
     top: 0px;
     left: 0px;
 }
-
+.legend {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    height: 180px;
+    display: flex;
+}
+.pointer {
+    position: absolute;
+    left: 0px;
+    width:16px;
+    height: 4px;
+    background: #1a1a1a;
+}
+.legend .contain{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.legend-text {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    padding-left: 6px;
+}
+.legend-text b {
+    font-weight: 600;
+}
+.legend .bar {
+    background-image: linear-gradient(-180deg, #FCCDDC 4%, #DC648D 100%);
+    width:16px;
+    height: 100%;
+}
 .controls {
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */

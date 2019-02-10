@@ -92,8 +92,16 @@ var allDates = [{
 
 for (var i = 0; i < allData.length; i++) {
   allData[i].desktop_avg_sessions_per_user = allData[i].desktop_estimated_visits / allData[i].desktop_estimated_unique;
-  allData[i].mobileweb_avg_sessions_per_user = allData[i].mobileweb_estimated_visits / allData[i].mobileweb_estimated_unique;
-  allData[i].total_avg_sessions_per_user = allData[i].total_estimated_visits / allData[i].total_estimated_unique;
+
+  if (allData[i].total_estimated_unique == 0 || allData[i].mobileweb_estimated_unique == 0) {
+    allData[i].mobileweb_avg_sessions_per_user = 0;
+    allData[i].total_avg_sessions_per_user = 0;
+
+  } else {
+    allData[i].mobileweb_avg_sessions_per_user = allData[i].mobileweb_estimated_visits / allData[i].mobileweb_estimated_unique;
+    allData[i].total_avg_sessions_per_user = allData[i].total_estimated_visits / allData[i].total_estimated_unique;
+
+  }
 }
 
 
@@ -137,24 +145,30 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
       });
 
       $scope.currCountry = e.features[0].properties.ADMIN;
-      if ($scope.mapData[(e.features[0].properties.ISO_N3)])
-      {
+      if ($scope.mapData[(e.features[0].properties.ISO_N3)]) {
         if ($scope.currMetric.dataName == 'avg_visit_duration') {
           $scope.currValue = "" + fancyTimeFormat(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)])) + " Mins";
-  
+
         } else if ($scope.currMetric.dataName == 'pages_per_visit') {
           $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Pages";
-  
+
         } else if ($scope.currMetric.dataName == 'avg_sessions_per_user') {
           $scope.currValue = parseFloat($scope.mapData[(e.features[0].properties.ISO_N3)]).toFixed(1) + " Sessions";
-  
+
         } else {
           $scope.currValue = nFormatter(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]));
         }
       } else {
-        $scope.currValue=0;
+        $scope.currValue = 0;
       }
-     
+
+
+
+      // set pointer on legend
+      $scope.currLegendTop = (parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]) - parseInt($scope.mapData['minValue'])) / (parseInt($scope.mapData['maxValue']) - parseInt($scope.mapData['minValue']));
+
+
+
       $scope.$apply();
 
     }
@@ -231,10 +245,50 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
 
   $scope.drawmap = function () {
+
+
     var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
     // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
     $scope.mapData = getData($scope.currDomain.dataName, $scope.currDateRange.start, $scope.currDateRange.end, $scope.currMetric.dataName, $scope.currDevice.dataName);
+
+
+
+
+    if ($scope.currMetric.dataName == 'avg_visit_duration') {
+
+      $scope.currMaxVal = fancyTimeFormat(parseInt($scope.mapData['maxValue'])) + " Mins";
+      $scope.currMinVal = fancyTimeFormat(parseInt($scope.mapData['minValue'])) + " Mins";
+
+
+    } else if ($scope.currMetric.dataName == 'pages_per_visit') {
+
+      $scope.currMaxVal = parseFloat($scope.mapData['maxValue']).toFixed(1) + " Pages";
+      $scope.currMinVal = parseFloat($scope.mapData['minValue']).toFixed(1) + " Pages";
+
+
+
+    } else if ($scope.currMetric.dataName == 'avg_sessions_per_user') {
+
+      $scope.currMaxVal = parseFloat($scope.mapData['maxValue']).toFixed(1) + " Sessions";
+      $scope.currMinVal = parseFloat($scope.mapData['minValue']).toFixed(1) + " Sessions";
+
+    } else {
+
+
+      $scope.currMaxVal = nFormatter(parseInt($scope.mapData['maxValue'])) + "";
+      $scope.currMinVal = nFormatter(parseInt($scope.mapData['minValue'])) + "";
+
+
+    }
+
+
+
+    if ($scope.mapData['maxCountry'])
+      $scope.currMaxCountry = getCountryName[$scope.mapData['maxCountry']];
+    $scope.currMinCountry = getCountryName[$scope.mapData['minCountry']];
+
+
 
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
@@ -267,7 +321,7 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
 var getCountryName = [];
 for (var j = 0; j < allCountries.length; j++) {
-  getCountryName[parseInt(allCountries[j]["country-code"])] = allCountries[j]["name"];
+  getCountryName[allCountries[j]["country-code"]] = allCountries[j]["name"];
 }
 
 
@@ -288,8 +342,6 @@ function getData(domain, datestart, dateend, metric, device) {
 
   var returnArr = {};
   var currMetric = device + "_" + metric;
-  var maxValue = 0;
-  var minValue = 100000;
   var AVGArr = [];
 
   for (var i = 0; i < allData.length; i++) {
@@ -311,22 +363,37 @@ function getData(domain, datestart, dateend, metric, device) {
   }
 
   // loop throu returnArr
+  var maxValue = 0;
+  var minValue = 0;
+  var maxCountry = "";
+  var minCountry = "";
+  var minIsSet = false;
 
   for (var key in returnArr) {
     if (returnArr.hasOwnProperty(key)) {
+      if (!minIsSet) {
+        minValue = returnArr[key];
+        minCountry = key;
+        minIsSet = true;
+      }
+      // do average for times
       returnArr[key] = returnArr[key] / AVGArr[key];
 
       if (maxValue < returnArr[key]) {
         maxValue = returnArr[key];
+        maxCountry = key;
       }
       if (minValue > returnArr[key]) {
         minValue = returnArr[key];
+        minCountry = key;
       }
     }
   }
 
   returnArr['maxValue'] = maxValue
   returnArr['minValue'] = minValue
+  returnArr['maxCountry'] = maxCountry
+  returnArr['minCountry'] = minCountry
 
   // console.log(maxValue,minValue)
   return returnArr;
