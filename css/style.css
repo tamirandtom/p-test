@@ -67,6 +67,13 @@ body {
     width:16px;
     height: 100%;
 }
+
+.legend .barCompare {
+    width:16px;
+    height: 100%;
+}
+
+
 .controls {
     -webkit-user-select: none; /* Safari 3.1+ */
     -moz-user-select: none; /* Firefox 2+ */

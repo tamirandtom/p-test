@@ -5,8 +5,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1N
 var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/tamirp/cjrw716rl22gm1foe5p28gaap',
-  center: [-103.59179687498357, 40.66995747013945],
-  zoom: 3
+  center: [0.59179687498357, 0.66995747013945],
+  zoom: 1.9
 });
 
 
@@ -123,6 +123,23 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
   map.on('style.load', function () {
     $scope.drawmap();
   })
+
+  $scope.currCountryPercent = 50;
+  $scope.toggleComparison = function() {
+    $scope.toggleComparisonMode = !($scope.toggleComparisonMode);
+    $scope.drawmap();
+  }
+
+  $scope.toggleComparisonMode = false;
+  map.on("click", "a", function (e) {
+    if (e.features.length > 0) {
+      $scope.toggleComparisonMode = !($scope.toggleComparisonMode);
+      $scope.toggleComparisonModeCountry = e.features[0].properties.ISO_N3;
+      $scope.toggleComparisonModeCountryLabel = e.features[0].properties.BRK_NAME;
+      // Draw map again with mode changed
+      $scope.drawmap();
+      }
+      });
 
   map.on("mousemove", "a", function (e) {
     if (e.features.length > 0) {
@@ -246,13 +263,13 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
   $scope.drawmap = function () {
 
-
+  
     var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
+    var colorScaleComparePos = chroma.scale(['#eee','#A5FEE3','#82F0CF','#49E1B3','#1EC794','#13A77A']).correctLightness();
+    var colorScaleCompareNeg = chroma.scale(['#BB3F3F','#F26F6F','#FE9292','#FFC9C9','#FFE6E6','#eee']).correctLightness();
     // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
     $scope.mapData = getData($scope.currDomain.dataName, $scope.currDateRange.start, $scope.currDateRange.end, $scope.currMetric.dataName, $scope.currDevice.dataName);
-
-
 
 
     if ($scope.currMetric.dataName == 'avg_visit_duration') {
@@ -283,22 +300,60 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
     }
 
 
-
-    if ($scope.mapData['maxCountry'])
-      $scope.currMaxCountry = getCountryName[$scope.mapData['maxCountry']];
+    $scope.currMaxCountry = getCountryName[$scope.mapData['maxCountry']];
     $scope.currMinCountry = getCountryName[$scope.mapData['minCountry']];
-
-
-
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
 
+    var color,currValue;
+
+    var selectedCountryValue = $scope.mapData[$scope.toggleComparisonModeCountry];
+
+
+  $scope.currCountryPercent =  100- (100 * ((selectedCountryValue - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]));
+  console.log($scope.currCountryPercent);
+ 
 
     for (var key in $scope.mapData) {
       if ($scope.mapData.hasOwnProperty(key)) {
-        var currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]);
-        // var color = chroma.mix("#fff", '#E6648F', currValue, 'lab').hex();
-        var color = colorScale(currValue).hex()
+if ($scope.toggleComparisonMode)
+{
+
+
+  if (selectedCountryValue == $scope.mapData["maxValue"]) {
+
+    currValue = $scope.mapData[key] / selectedCountryValue;
+    color = colorScaleCompareNeg(currValue).hex()
+
+  } else if (selectedCountryValue == $scope.mapData["minValue"]) {
+    
+    currValue = selectedCountryValue / $scope.mapData[key];
+    color = colorScaleComparePos(currValue).hex()
+
+  } else {
+    if (selectedCountryValue < $scope.mapData[key])
+    {
+       currValue = (($scope.mapData[key] - selectedCountryValue) / ($scope.mapData["maxValue"] - selectedCountryValue));
+      color = colorScaleComparePos(currValue).hex()
+  
+    } else if (selectedCountryValue > $scope.mapData[key]) {
+       currValue = (($scope.mapData[key] -  $scope.mapData["minValue"]) / (selectedCountryValue - $scope.mapData["minValue"]));
+      color = colorScaleCompareNeg(currValue).hex()
+  
+    } else {
+      color = "#1a1a1a";
+  
+    }
+  }
+
+
+}
+else {
+  currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]);
+  color = colorScale(currValue).hex()
+}
+        
+       
         expression.push(key, color);
       }
     }
