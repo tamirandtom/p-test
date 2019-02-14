@@ -1,6 +1,11 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1Nnc1NTkifQ.CxOvrXtNgryGkkgXkiShsQ';
 
 
+var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
+var colorScaleComparePos = chroma.scale(['#eee','#1EC794']).correctLightness();
+var colorScaleCompareNeg = chroma.scale(['#F26F6F','#eee']).correctLightness();
+
+
 
 var map = new mapboxgl.Map({
   container: 'map',
@@ -263,10 +268,6 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
   $scope.drawmap = function () {
 
-  
-    var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
-    var colorScaleComparePos = chroma.scale(['#eee','#A5FEE3','#82F0CF','#49E1B3','#1EC794','#13A77A']).correctLightness();
-    var colorScaleCompareNeg = chroma.scale(['#BB3F3F','#F26F6F','#FE9292','#FFC9C9','#FFE6E6','#eee']).correctLightness();
     // console.log(colorScale);
     // console.log(getData($scope.currDomain, $scope.currDate, $scope.currMetric, $scope.currDevice));
     $scope.mapData = getData($scope.currDomain.dataName, $scope.currDateRange.start, $scope.currDateRange.end, $scope.currMetric.dataName, $scope.currDevice.dataName);
