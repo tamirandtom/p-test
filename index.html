@@ -55,7 +55,17 @@
     {{currCountry}}: {{(currValue == 0 || isNaN(currValue))  ? 'no data' : currValue}}
 </div>
 
-  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-71087902-18"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-71087902-18');
+</script>
+
+
 
   <!-- <div ng-repeat="(key, value) in mapData" style="display:block;width:calc(({{value}} / {{mapData['maxValue']}})  * 100%); background:red;">
       {{key}} : {{value}}
