@@ -19,13 +19,13 @@ var allMetrics = [{
   "label": "how long users lasted 💦",
   "dataName": "avg_visit_duration"
 }, {
-  "label": "monthly sessions per users 🌡",
+  "label": "monthly sessions per user 🌡",
   "dataName": "avg_sessions_per_user"
 }, {
   "label": "how many videos per session were watched 🏊🏻‍♂️",
   "dataName": "pages_per_visit"
 }, {
-  "label": "the ammount of visits 🗿",
+  "label": "the amount of visits 🗿",
   "dataName": "estimated_visits"
 }, {
   "label": "the unique visits 💎",
