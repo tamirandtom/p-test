@@ -312,7 +312,7 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
 
 
   $scope.currCountryPercent =  100- (100 * ((selectedCountryValue - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]));
-  console.log($scope.currCountryPercent);
+  // console.log($scope.currCountryPercent);
  
 
     for (var key in $scope.mapData) {
