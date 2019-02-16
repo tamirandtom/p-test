@@ -2,8 +2,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1N
 
 
 var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
-var colorScaleComparePos = chroma.scale(['#eee','#1EC794']).correctLightness();
-var colorScaleCompareNeg = chroma.scale(['#F26F6F','#eee']).correctLightness();
+var colorScaleComparePos = chroma.scale(['#eee', '#1EC794']).correctLightness();
+var colorScaleCompareNeg = chroma.scale(['#F26F6F', '#eee']).correctLightness();
 
 
 
@@ -130,21 +130,21 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
   })
 
   $scope.currCountryPercent = 50;
-  $scope.toggleComparison = function() {
+  $scope.toggleComparison = function () {
     $scope.toggleComparisonMode = !($scope.toggleComparisonMode);
     $scope.drawmap();
   }
 
   $scope.toggleComparisonMode = false;
   map.on("click", "a", function (e) {
-    if (e.features.length > 0) {
+    if (e.features.length > 0 && $scope.mapData[e.features[0].properties.ISO_N3]) {
       $scope.toggleComparisonMode = !($scope.toggleComparisonMode);
       $scope.toggleComparisonModeCountry = e.features[0].properties.ISO_N3;
       $scope.toggleComparisonModeCountryLabel = e.features[0].properties.BRK_NAME;
       // Draw map again with mode changed
       $scope.drawmap();
-      }
-      });
+    }
+  });
 
   map.on("mousemove", "a", function (e) {
     if (e.features.length > 0) {
@@ -306,65 +306,58 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
     var expression = ["match", ["get", "ISO_N3"]];
     // Calculate color for each state based on the unemployment rate
 
-    var color,currValue;
+    var color, currValue;
 
     var selectedCountryValue = $scope.mapData[$scope.toggleComparisonModeCountry];
 
 
-  $scope.currCountryPercent =  100- (100 * ((selectedCountryValue - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]));
-  // console.log($scope.currCountryPercent);
- 
+    $scope.currCountryPercent = 100 - (100 * ((selectedCountryValue - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]));
+    // console.log($scope.currCountryPercent);
+
 
     for (var key in $scope.mapData) {
       if ($scope.mapData.hasOwnProperty(key)) {
-if ($scope.toggleComparisonMode)
-{
+        if ($scope.toggleComparisonMode) {
+          if ($scope.mapData[key] == selectedCountryValue) {
+            color="#1a1a1a";
+          } else if (selectedCountryValue == $scope.mapData["maxValue"]) {
+            currValue = $scope.mapData[key] / selectedCountryValue;
+            color = colorScaleCompareNeg(currValue).hex()
+          } else if (selectedCountryValue == $scope.mapData["minValue"]) {
+            currValue = selectedCountryValue / $scope.mapData[key];
+            color = colorScaleComparePos(currValue).hex()
+
+          } else {
+            if (selectedCountryValue < $scope.mapData[key]) {
+              currValue = (($scope.mapData[key] - selectedCountryValue) / ($scope.mapData["maxValue"] - selectedCountryValue));
+              color = colorScaleComparePos(currValue).hex()
+
+            } else if (selectedCountryValue > $scope.mapData[key]) {
+              currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / (selectedCountryValue - $scope.mapData["minValue"]));
+              color = colorScaleCompareNeg(currValue).hex()
+
+            } else {
+              color = "#1a1a1a";
+
+            }
+          }
 
 
-  if (selectedCountryValue == $scope.mapData["maxValue"]) {
-
-    currValue = $scope.mapData[key] / selectedCountryValue;
-    color = colorScaleCompareNeg(currValue).hex()
-
-  } else if (selectedCountryValue == $scope.mapData["minValue"]) {
-    
-    currValue = selectedCountryValue / $scope.mapData[key];
-    color = colorScaleComparePos(currValue).hex()
-
-  } else {
-    if (selectedCountryValue < $scope.mapData[key])
-    {
-       currValue = (($scope.mapData[key] - selectedCountryValue) / ($scope.mapData["maxValue"] - selectedCountryValue));
-      color = colorScaleComparePos(currValue).hex()
-  
-    } else if (selectedCountryValue > $scope.mapData[key]) {
-       currValue = (($scope.mapData[key] -  $scope.mapData["minValue"]) / (selectedCountryValue - $scope.mapData["minValue"]));
-      color = colorScaleCompareNeg(currValue).hex()
-  
-    } else {
-      color = "#1a1a1a";
-  
-    }
-  }
+        } else {
+          currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]);
+          color = colorScale(currValue).hex()
+        }
 
 
-}
-else {
-  currValue = (($scope.mapData[key] - $scope.mapData["minValue"]) / $scope.mapData["maxValue"]);
-  color = colorScale(currValue).hex()
-}
-        
-       
         expression.push(key, color);
       }
     }
-    expression.push("rgba(0,0,0,0)");
+    expression.push("rgba(0,0,0,0)"); // no data color
 
-    map.setPaintProperty('a', 'fill-color', expression);
-    // map.setPaintProperty('a', 'fill-color', "#627BC1");
+    // map.setPaintProperty('a', 'fill-color', expression);
     map.setPaintProperty('a', 'fill-color', ["case",
       ["boolean", ["feature-state", "hover"], false],
-      "#000",
+      "#1a1a1a",
       expression
     ]);
 
