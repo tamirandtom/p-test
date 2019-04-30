@@ -1,7 +1,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1Nnc1NTkifQ.CxOvrXtNgryGkkgXkiShsQ';
 
 
-var colorScale = chroma.scale(['#FFD9E6', '#E6648F', '#C6446F', '#8B304F']).correctLightness();
+var colorScale = chroma.scale(['#eceff1', '#90a4ae', '#607d8b', '#37474f']).correctLightness();
 var colorScaleComparePos = chroma.scale(['#eee', '#1EC794']).correctLightness();
 var colorScaleCompareNeg = chroma.scale(['#F26F6F', '#eee']).correctLightness();
 
@@ -16,19 +16,19 @@ var map = new mapboxgl.Map({
 
 
 var allMetrics = [{
-  "label": "how long users lasted 💦",
+  "label": "how long users lasted",
   "dataName": "avg_visit_duration"
 }, {
-  "label": "monthly sessions per user 🌡",
+  "label": "monthly sessions per user",
   "dataName": "avg_sessions_per_user"
 }, {
-  "label": "how many videos per session were watched 🏊🏻‍♂️",
+  "label": "how many videos per session were watched",
   "dataName": "pages_per_visit"
 }, {
-  "label": "the amount of visits 🗿",
+  "label": "the amount of visits",
   "dataName": "estimated_visits"
 }, {
-  "label": "the unique visits 💎",
+  "label": "the unique visits",
   "dataName": "estimated_unique"
 }]
 var allSites = [{
@@ -45,13 +45,13 @@ var allSites = [{
   "dataName": "xvideos.com"
 }]
 var allDevices = [{
-  "label": "desktop 💻",
+  "label": "desktop",
   "dataName": "desktop"
 }, {
-  "label": "mobile 📱",
+  "label": "mobile web",
   "dataName": "mobileweb"
 }, {
-  "label": "all traffic 🕹",
+  "label": "all traffic",
   "dataName": "total"
 }]
 
