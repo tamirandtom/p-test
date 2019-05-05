@@ -60,6 +60,7 @@
 
 <div ng-if="currCountry" class="tooltip">
     {{currCountry}}: {{(currValue == 0 || isNaN(currValue))  ? 'no data' : currValue}}
+    <span ng-if="toggleComparisonMode && currCountry !=  toggleComparisonModeCountryLabel">({{calcDiff()}} Compared to {{toggleComparisonModeCountryLabel}})</span>
 </div>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->

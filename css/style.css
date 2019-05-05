@@ -1,8 +1,5 @@
 @import url('https://rsms.me/inter/inter.css');
 html { 
-    font-family: 'Merriweather', serif;
-
-
     font-family: 'Inter', sans-serif; 
 }
 @supports (font-variation-settings: normal) {
@@ -87,9 +84,8 @@ body {
     left: 0px;
     z-index: 1;
     padding: 24px;
-    font-family: 'Inter';
     /* font-family: 'Merriweather', serif; */
-
+    font-family: 'Inter', sans-serif; 
     font-weight: 400;
     text-shadow: 0px 0px 1px #fff;
     font-size: 20px;
@@ -102,22 +98,23 @@ body {
     right: 40px;
     bottom: 40px;
     z-index: 1;
-    /* font-family: 'Inter'; */
-    font-family: 'Merriweather', serif;
-
+    padding:4px 8px;
+    font-family: 'Inter', sans-serif; 
+    border-radius: 4px;
     font-weight: 400;
-    font-size: 56px;
-    color: rgba(0, 0, 0, 0.60);
+    font-size: 40px;
+    color: #fff;
     letter-spacing: 0;
     pointer-events: none;
+    background: #000;
 }
 
 .controls .clickable {
     /* font-weight: 500; */
     transition: all .2s linear;
-    color: rgba(0, 0, 0, 0.9);
+    color: #fff;
     cursor: pointer;
-    background: #ffeb3b;
+    background: #546e7a;
     border-radius: 4px;
     padding: 4px 6px;
 }

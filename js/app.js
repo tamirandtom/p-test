@@ -1,7 +1,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGFtaXJwIiwiYSI6ImNqNmtvcjBieTFtOGgzMm52NWQ1Nnc1NTkifQ.CxOvrXtNgryGkkgXkiShsQ';
 
 
-var colorScale = chroma.scale(['#eceff1', '#90a4ae', '#607d8b', '#37474f']).correctLightness();
+var colorScale = chroma.scale(['#eceff1', '#37474f']).correctLightness();
 var colorScaleComparePos = chroma.scale(['#eee', '#1EC794']).correctLightness();
 var colorScaleCompareNeg = chroma.scale(['#F26F6F', '#eee']).correctLightness();
 
@@ -167,6 +167,7 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
       });
 
       $scope.currCountry = e.features[0].properties.ADMIN;
+      $scope.currValueNum = parseInt($scope.mapData[(e.features[0].properties.ISO_N3)]);
       if ($scope.mapData[(e.features[0].properties.ISO_N3)]) {
         if ($scope.currMetric.dataName == 'avg_visit_duration') {
           $scope.currValue = "" + fancyTimeFormat(parseInt($scope.mapData[(e.features[0].properties.ISO_N3)])) + " Mins";
@@ -226,6 +227,32 @@ App.controller('index', ['$scope', '$http', '$location', function ($scope, $http
   // });
 
   var hoveredStateId = null;
+
+
+
+  $scope.calcDiff = function () {
+    let minusSTR = "-";
+    let isPositive = false;
+    if (($scope.mapData[$scope.toggleComparisonModeCountry] - $scope.currValueNum) > 0) {
+     isPositive = true;
+     minusSTR = "+";
+    }
+    if ($scope.currMetric.dataName == 'avg_visit_duration') {
+    return minusSTR + fancyTimeFormat(Math.abs($scope.mapData[$scope.toggleComparisonModeCountry] - $scope.currValueNum)) + " Mins";
+    } else if ($scope.currMetric.dataName == 'pages_per_visit') {
+      return minusSTR + parseFloat(Math.abs($scope.mapData[$scope.toggleComparisonModeCountry] - $scope.currValueNum)).toFixed(1) + " Pages";
+
+    } else if ($scope.currMetric.dataName == 'avg_sessions_per_user') {
+      return minusSTR +  parseFloat(Math.abs($scope.mapData[$scope.toggleComparisonModeCountry] - $scope.currValueNum)).toFixed(1) + " Sessions";
+
+    } else {
+      return minusSTR + nFormatter(parseInt(Math.abs($scope.mapData[$scope.toggleComparisonModeCountry] - $scope.currValueNum)));
+    }
+  
+
+
+  }
+
 
   $scope.nextClick = function (metric) {
 
